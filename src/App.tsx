@@ -1,4 +1,4 @@
-import { LandingPage, Register, Login } from "./features";
+import { LandingPage, Register, Login, Dashboard } from "./features";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -16,6 +16,16 @@ const router = createBrowserRouter([
     path: "/register",
     element: <Register />,
   },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+    children: [
+      {
+        path: 'boards/:boardId',
+        element: <></>,
+      },
+    ]
+  }
 ]);
 
 

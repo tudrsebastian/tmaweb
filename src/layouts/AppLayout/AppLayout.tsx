@@ -1,13 +1,18 @@
-import { AppShell, Navbar, Header } from '@mantine/core';
-import { ReactNode } from 'react';
-
+import { AppShell, Navbar, Header, Anchor, Flex, Text, Title, Divider, Group } from '@mantine/core';
+import { ReactNode, useState } from 'react';
+import { CustomHeader, CustomNavbar } from '../../features';
+import useUser from '../../store/userStore';
+import { Logout } from 'tabler-icons-react';
 
 const AppLayout = (props: { children: ReactNode }) => {
+    const [opened, setOpened] = useState(false);
+    const noNav = window.location.pathname === '/dashboard' ? false : true;
     return (
         <AppShell
             padding="md"
-            navbar={<Navbar width={{ base: 300 }} height={500} p="xs">{/* Navbar content */}</Navbar>}
-            header={<Header height={60} p="xs">Routes will be here</Header>}
+            navbar={noNav ? <></> : <CustomNavbar opened={opened} />
+            }
+            header={<CustomHeader opened={opened} setOpened={setOpened} />}
             styles={(theme) => ({
                 main: { backgroundColor: theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.colors.gray[0] },
             })}
