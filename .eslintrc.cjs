@@ -9,11 +9,10 @@ module.exports = {
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh"],
-  rules: {
-    "react-refresh/only-export-components": [
-      "warn",
-      { allowConstantExport: true, unused: false },
-    ],
-    "no-unused-vars": "off",
-  },
+  // rules: {
+  //   "react-refresh/only-export-components": [
+  //     "warn",
+  //     { allowConstantExport: true },
+  //   ],
+  // },
 };

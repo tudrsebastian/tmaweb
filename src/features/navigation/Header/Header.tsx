@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Header, Flex, Anchor, Burger, MediaQuery, useMantineTheme, Title } from '@mantine/core';
 import { Home, Login, Logout } from 'tabler-icons-react';
 import useUser from '../../../store/userStore';

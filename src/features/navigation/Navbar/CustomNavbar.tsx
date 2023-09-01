@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Divider, Navbar, Title, Text, Group, Anchor, Flex } from "@mantine/core"
 import { Logout } from "tabler-icons-react"
 import useUser from "../../../store/userStore";

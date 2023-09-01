@@ -2,11 +2,9 @@ import { TextInput, Button, Group, Box, Paper, Container, Text, Anchor } from '@
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 const Register = () => {
     const navigate = useNavigate();
-    const [error, setError] = useState('')
     const form = useForm({
         initialValues: {
             name: '',
@@ -34,7 +32,6 @@ const Register = () => {
 
         } catch (error) {
             if (error?.response?.data.statusCode === 409) {
-                setError('An account with this email already exists')
                 notifications.show({
                     title: 'Error creating new account',
                     message: `An account with this email already exists`,

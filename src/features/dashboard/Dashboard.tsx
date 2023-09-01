@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Text } from "@mantine/core"
 import useUser from "../../store/userStore";
 import { Navigate } from "react-router-dom";

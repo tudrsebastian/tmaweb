@@ -1,8 +1,7 @@
-import { AppShell, Navbar, Header, Anchor, Flex, Text, Title, Divider, Group } from '@mantine/core';
+import { AppShell, } from '@mantine/core';
 import { ReactNode, useState } from 'react';
 import { CustomHeader, CustomNavbar } from '../../features';
-import useUser from '../../store/userStore';
-import { Logout } from 'tabler-icons-react';
+
 
 const AppLayout = (props: { children: ReactNode }) => {
     const [opened, setOpened] = useState(false);

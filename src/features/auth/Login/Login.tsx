@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { TextInput, Button, Group, Box, Paper, Container, Text, Anchor } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import axios from 'axios';
