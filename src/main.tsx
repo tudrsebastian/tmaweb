@@ -4,13 +4,16 @@ import App from './App.tsx'
 import { AppLayout } from './layouts/index.tsx'
 import { MantineGlobalProvider } from './providers/index.tsx'
 import { NavigationProgress } from '@mantine/nprogress';
+import { BrowserRouter } from "react-router-dom"
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <MantineGlobalProvider>
-      <NavigationProgress />
-      <AppLayout>
+
+  <MantineGlobalProvider>
+    <NavigationProgress />
+    <AppLayout>
+      <BrowserRouter>
         <App />
-      </AppLayout>
-    </MantineGlobalProvider>
-  </React.StrictMode>,
+      </BrowserRouter>
+    </AppLayout>
+  </MantineGlobalProvider>
+
 )

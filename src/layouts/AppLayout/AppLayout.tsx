@@ -1,11 +1,13 @@
 import { AppShell, } from '@mantine/core';
 import { ReactNode, useState } from 'react';
 import { CustomHeader, CustomNavbar } from '../../features';
+import useUser from '../../store/userStore';
 
 
 const AppLayout = (props: { children: ReactNode }) => {
     const [opened, setOpened] = useState(false);
-    const noNav = window.location.pathname === '/dashboard' ? false : true;
+    const { id } = useUser();
+    const noNav = id === null ? true : false;
     return (
         <AppShell
             padding="md"

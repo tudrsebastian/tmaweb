@@ -16,6 +16,9 @@ const Login = () => {
     const [token, setToken] = useUser(
         (state) => [state.token, state.setToken]
     )
+    const [id, setId] = useUser(
+        (state) => [state.id, state.setId]
+    );
 
     const login = async (values: { email: string; password: string; }) => {
         try {
@@ -27,6 +30,7 @@ const Login = () => {
             setEmail(res.data.email)
             setName(res.data.name)
             setToken(res.data.accessToken)
+            setId(res.data.id);
         } catch (error) {
             if (error?.response.status === 404) {
                 notifications.show(
