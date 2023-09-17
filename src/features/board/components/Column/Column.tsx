@@ -14,9 +14,12 @@ export default function Column({ column, columnId, index }) {
                 alignItems: "center"
             }}
             key={columnId}
+
         >
-            <Title size='h2'>{column.name}</Title>
-            <Paper style={{ margin: 8 }}>
+            <Paper my='xs' shadow="xs" radius="sm" p='4px' withBorder>
+                <Title size='h6'>{column.name}</Title>
+            </Paper>
+            <Paper style={{ margin: 4 }} withBorder>
                 <Droppable droppableId={columnId} key={columnId}>
                     {(provided, snapshot) => {
                         return (

@@ -31,7 +31,7 @@ export default function Task({ item, index }) {
                         }}
                     >
                         <Card.Section>
-                            <Text color={theme.colorScheme === 'dark' ? theme.colors.gray[0] : theme.colors.dark[9]}>{item.content}</Text>
+                            <Text color={theme.colorScheme === 'dark' ? theme.colors.gray[0] : theme.colors.dark[9]}>{item.title}</Text>
                         </Card.Section>
                     </Card>
                 );

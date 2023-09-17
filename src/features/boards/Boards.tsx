@@ -2,7 +2,7 @@ import { Key, ReactNode, ReactPortal, useEffect, useState } from "react";
 import useUser from "../../store/userStore";
 import { client } from "../../api/axios";
 import { Anchor } from "@mantine/core";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { notifications } from '@mantine/notifications';
 
 interface Boards {
@@ -13,7 +13,7 @@ interface Boards {
 const Boards = () => {
     const [boards, setBoards] = useState<Boards>();
     const { id, token } = useUser();
-
+    const navigate = useNavigate();
     const getBoardsTest = async () => {
         try {
             const res = await client.get(`/users/${id}`, { headers: { 'Authorization': `Bearer ${token}` } })
@@ -38,6 +38,7 @@ const Boards = () => {
                         radius: 'md',
                     }
                 )
+                navigate('/login')
             }
         }
     }

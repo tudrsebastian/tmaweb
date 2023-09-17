@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { client } from '../../api/axios';
 import { Box, Card, Container, Paper, Skeleton, Title, useMantineTheme } from '@mantine/core';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import useUser from '../../store/userStore';
 import { notifications } from '@mantine/notifications';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
@@ -18,31 +18,37 @@ const itemsFromBackend = [
 
 ];
 
-const columnsFromBackend = {
-    'deafdsafa': {
-        name: "Backlog",
-        items: itemsFromBackend
+const columnsFromBackend = [
+    {
+        id: 1,
+        name: 'Backlog',
+        items: itemsFromBackend,
     },
-    [uuid()]: {
-        name: "To do",
-        items: []
+    {
+        id: uuid(),
+        name: 'To do',
+        items: [],
     },
-    [uuid()]: {
-        name: "In Progress",
-        items: []
+    {
+        id: uuid(),
+        name: 'In Progress',
+        items: [],
     },
-    [uuid()]: {
-        name: "Done",
-        items: []
-    }
-};
+    {
+        id: uuid(),
+        name: 'Done',
+        items: [],
+    },
+];
 
 const Board = () => {
     const [board, setBoard] = useState();
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
     const theme = useMantineTheme()
     const { token } = useUser();
     const [columns, setColumns] = useState(columnsFromBackend);
+    const [test, setTest] = useState();
     const { boardId } = useParams();
     const onDragEnd = (result, columns, setColumns) => {
         if (!result.destination) return;
@@ -81,12 +87,20 @@ const Board = () => {
             });
         }
     };
-
+    // console.log(columns)
 
     const getBoard = async () => {
         try {
             const res = await client.get(`boards/${boardId}`, { headers: { 'Authorization': `Bearer ${token}` } });
             setBoard(res.data);
+            console.log(res.data.columns);
+            const newColumns = res.data.columns.map(col => ({
+                id: col.id.toString(),
+                name: col.name,
+                items: col.Ticket || [],
+            }))
+            console.log(newColumns);
+            setColumns(newColumns);
             setLoading(false);
         } catch (error) {
             if (error?.response.status === 403) {
@@ -107,6 +121,7 @@ const Board = () => {
                         radius: 'md',
                     }
                 )
+
             } else if (error?.response.status === 404) {
                 notifications.show(
                     {
@@ -128,7 +143,7 @@ const Board = () => {
     return (
         <>
             <Skeleton visible={loading}>
-                <p>{JSON.stringify(board)}</p>
+                <Title align='center' size='h2'>{board ? board.title : 'Not found'}</Title>
             </Skeleton>
             <Box style={{ display: "flex", justifyContent: "center", }}>
                 <DragDropContext
@@ -136,11 +151,14 @@ const Board = () => {
                 >
                     {Object.entries(columns).map(([columnId, column], index) => {
                         return (
-                            <Column column={column} columnId={columnId} index={index} />
+                            <Skeleton visible={loading}>
+                                <Column column={column} columnId={columnId} index={index} />
+                            </Skeleton>
                         );
                     })}
                 </DragDropContext>
             </Box>
+
         </>
 
     )
