@@ -20,12 +20,12 @@ export default function Task({ item, index }) {
                         {...provided.dragHandleProps}
                         style={{
                             userSelect: "none",
-                            padding: 16,
+                            padding: 20,
                             margin: "0 0 8px 0",
                             minHeight: "100px",
                             backgroundColor: snapshot.isDragging
-                                ? theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[9]
-                                : theme.colorScheme === 'dark' ? theme.colors.dark[2] : theme.colors.gray[5],
+                                ? theme.colorScheme === 'dark' ? theme.colors.dark[3] : theme.colors.gray[6]
+                                : theme.colorScheme === 'dark' ? theme.colors.dark[2] : theme.colors.gray[3],
                             color: "white",
                             ...provided.draggableProps.style
                         }}

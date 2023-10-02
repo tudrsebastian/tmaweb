@@ -31,7 +31,7 @@ const CustomHeader = (props: CustomHeaderProps) => {
     const { colorScheme, toggleColorScheme } = useMantineColorScheme();
     const dark = colorScheme === 'dark';
     const { id } = useUser();
-    const isNavVisible = id === null ? true : false;
+    const isNavVisible = id === null || window.location.pathname === '/' ? true : false;
 
     return (
         <Header height={60} p="xs">
@@ -42,7 +42,7 @@ const CustomHeader = (props: CustomHeaderProps) => {
                 direction="row"
                 wrap="wrap">
 
-                {id === null ?
+                {id === null || window.location.pathname === '/' ?
                     <>
                         {links.map(link =>
                             <Flex

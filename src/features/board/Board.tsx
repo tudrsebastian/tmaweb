@@ -1,26 +1,28 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, SetStateAction } from 'react';
 import { client } from '../../api/axios';
-import { Box, Card, Container, Paper, Skeleton, Title, useMantineTheme } from '@mantine/core';
+import { Box, Card, Container, Flex, Paper, Skeleton, Title, useMantineTheme } from '@mantine/core';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import useUser from '../../store/userStore';
 import { notifications } from '@mantine/notifications';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { Column, Task } from './components';
+import { Column } from './components';
 import { v4 as uuid } from 'uuid';
 
 const itemsFromBackend = [
-    { id: uuid(), content: "First task", description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." },
-    { id: uuid(), content: "Second task", description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." },
-    { id: uuid(), content: "Third task", description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." },
-    { id: uuid(), content: "Fourth task", description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." },
-    { id: uuid(), content: "Fifth task", description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum." },
+    { id: uuid(), content: "First task" },
+    { id: uuid(), content: "Second task", },
+    { id: uuid(), content: "Third task", },
+    { id: uuid(), content: "Fourth task", },
+    { id: uuid(), content: "Fifth task", },
 
 ];
 
 const columnsFromBackend = [
     {
-        id: 1,
+        id: uuid(),
         name: 'Backlog',
         items: itemsFromBackend,
     },
@@ -40,7 +42,21 @@ const columnsFromBackend = [
         items: [],
     },
 ];
-
+function setId(destination, column) {
+    let id;
+    if (destination === '0') {
+        id = column[0].id;
+    } else if (destination === '1') {
+        id = column[1].id;
+    } else if (destination === '2') {
+        id = column[2].id
+    } else if (destination === '3') {
+        id = column[3].id
+    } else {
+        return;
+    }
+    return id;
+}
 const Board = () => {
     const [board, setBoard] = useState();
     const [loading, setLoading] = useState(true);
@@ -48,13 +64,16 @@ const Board = () => {
     const theme = useMantineTheme()
     const { token } = useUser();
     const [columns, setColumns] = useState(columnsFromBackend);
-    const [test, setTest] = useState();
     const { boardId } = useParams();
-    const onDragEnd = (result, columns, setColumns) => {
-        if (!result.destination) return;
-        console.log(result);
-        const { source, destination } = result;
+    console.log(columns);
 
+    const onDragEnd = (result: { destination: any; source?: any; }, columns: { id: any; name: string; items: { id: any; content: string; }[]; }[], setColumns: { (value: SetStateAction<{ id: any; name: string; items: { id: any; content: string; }[]; }[]>): void; (arg0: any): void; }) => {
+        if (!result.destination) return;
+        console.log(columns);
+        const { source, destination } = result;
+        console.log(result);
+        console.log(destination);
+        console.log(setId(destination.droppableId, columns))
         if (source.droppableId !== destination.droppableId) {
             const sourceColumn = columns[source.droppableId];
             const destColumn = columns[destination.droppableId];
@@ -95,13 +114,13 @@ const Board = () => {
             setBoard(res.data);
             console.log(res.data.columns);
             const newColumns = res.data.columns.map(col => ({
-                id: col.id.toString(),
+                id: col.id,
                 name: col.name,
                 items: col.Ticket || [],
             }))
             console.log(newColumns);
             setColumns(newColumns);
-            setLoading(false);
+
         } catch (error) {
             if (error?.response.status === 403) {
                 notifications.show(
@@ -132,6 +151,8 @@ const Board = () => {
                     }
                 )
             }
+        } finally {
+            setLoading(false);
         }
     }
     useEffect(() => {
@@ -143,21 +164,34 @@ const Board = () => {
     return (
         <>
             <Skeleton visible={loading}>
-                <Title align='center' size='h2'>{board ? board.title : 'Not found'}</Title>
-            </Skeleton>
-            <Box style={{ display: "flex", justifyContent: "center", }}>
-                <DragDropContext
-                    onDragEnd={result => onDragEnd(result, columns, setColumns)}
-                >
-                    {Object.entries(columns).map(([columnId, column], index) => {
-                        return (
-                            <Skeleton visible={loading}>
-                                <Column column={column} columnId={columnId} index={index} />
-                            </Skeleton>
-                        );
-                    })}
-                </DragDropContext>
-            </Box>
+                <Title align='center' my='xs' size='h2'>{board ? board.title : 'Not found'}</Title>
+                <Paper sx={{ boxShadow: theme.colorScheme === 'dark' ? '5px 5px 15px 5px #1C7ED6' : '5px 5px 15px 5px #91A7FF' }} shadow="lg" radius="lg" withBorder p="xl">
+                    <Container fluid>
+                        <Flex
+                            mih={50}
+                            gap='xs'
+                            justify="center"
+                            align="flex-start"
+                            direction="row"
+                        // wrap="wrap"
+                        >
+
+                            <DragDropContext
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                onDragEnd={(result: any) => onDragEnd(result, columns, setColumns)}
+                            >
+                                {Object.entries(columns).map(([columnId, column], index) => {
+                                    return (
+                                        <Skeleton visible={loading}>
+                                            <Column column={column} columnId={columnId} index={index} />
+                                        </Skeleton>
+                                    );
+                                })}
+                            </DragDropContext>
+                        </Flex>
+                    </Container>
+                </Paper>
+            </Skeleton >
 
         </>
 

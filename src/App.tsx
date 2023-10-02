@@ -1,4 +1,4 @@
-import { LandingPage, Register, Login, Dashboard, Boards, Board } from "./features";
+import { LandingPage, Register, Login, Dashboard, Board } from "./features";
 import {
   Route,
   Routes,
@@ -17,9 +17,7 @@ function App() {
           element={<Login />} />
         <Route path="/register"
           element={<Register />} />
-        <Route path='/boards'
-          element={<Boards />} />
-        <Route path='boards/:boardId'
+        <Route path='dashboard/:boardId'
           element={<Board />} />
       </Routes>
     </>

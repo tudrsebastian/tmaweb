@@ -7,7 +7,8 @@ import useUser from '../../store/userStore';
 const AppLayout = (props: { children: ReactNode }) => {
     const [opened, setOpened] = useState(false);
     const { id } = useUser();
-    const noNav = id === null ? true : false;
+    console.log(window.location.pathname)
+    const noNav = id === null || window.location.pathname === '/' ? true : false;
     return (
         <AppShell
             padding="md"

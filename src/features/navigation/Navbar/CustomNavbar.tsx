@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Divider, Navbar, Title, Text, Group, Anchor, Flex } from "@mantine/core"
+import { Divider, Navbar, Title, Text, Group, Anchor, Flex, NavLink } from "@mantine/core"
 import { Logout } from "tabler-icons-react"
 import useUser from "../../../store/userStore";
 import { capitalizeFirstLetter } from "../../../helpers/capitalizeLetter";
 import { Clipboard, Inbox, LayoutDashboard } from "tabler-icons-react";
+import { useState } from "react";
 interface CustomNavbarProps {
     opened: boolean;
 }
@@ -26,15 +27,7 @@ const links = [
             color={'#2d7986'}
         />
     },
-    {
-        name: 'Boards',
-        path: '/boards',
-        icon: <Clipboard
-            size={22}
-            strokeWidth={2}
-            color={'#2d7986'}
-        />
-    }]
+]
 const CustomNavbar = (props: CustomNavbarProps) => {
     const [name, setName] = useUser(
         (state) => [state.name, state.setName],
@@ -48,7 +41,15 @@ const CustomNavbar = (props: CustomNavbarProps) => {
     const [id, setId] = useUser(
         (state) => [state.id, state.setId]
     )
-
+    function isActive() {
+        let isTrue
+        if (window.location.pathname.length > 8) {
+            isTrue = window.location.pathname.slice(0, 10)
+        } else {
+            isTrue = window.location.pathname
+        }
+        return isTrue
+    }
     const logout = () => {
         setId(null);
         setEmail('');
@@ -62,12 +63,18 @@ const CustomNavbar = (props: CustomNavbarProps) => {
             </Navbar.Section>
             <Divider size="sm" color='blue' />
             <Navbar.Section grow mt="md">
-                {links.map(link =>
-                    <Flex
-                        gap={2}
-                        direction="row"><span>{link.icon}</span>
-                        <Anchor href={link.path}>{link.name}</Anchor>
-                    </Flex>
+                {links.map((link, index) =>
+
+                    <Anchor href={link.path}>
+                        <NavLink
+                            key={link.name}
+                            label={link.name}
+                            active={isActive() === link.path}
+                            icon={link.icon}
+                        />
+                    </Anchor>
+
+
                 )}
             </Navbar.Section>
             <Divider size="sm" color='blue' />
