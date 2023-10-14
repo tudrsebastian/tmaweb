@@ -14,7 +14,7 @@ export default function Column({ column, columnId, index }) {
     const badgeColor = column.name === 'Backlog' ? 'gray' : column.name === 'Todo' ? 'red' : column.name === 'In Progress' ? 'cyan' : column.name === 'Done' ? 'teal' : '';
     return (
         <Flex
-            mih={50}
+            // mih={50}
 
             gap="xs"
             justify="flex-start"

@@ -9,6 +9,7 @@ import useUser from '../../store/userStore';
 import { notifications } from '@mantine/notifications';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Column } from './components';
+import { setId, updateColumn, updatePosition } from '../../helpers/updateTicket';
 import { v4 as uuid } from 'uuid';
 
 const itemsFromBackend = [
@@ -42,21 +43,28 @@ const columnsFromBackend = [
         items: [],
     },
 ];
-function setId(destination, column) {
-    let id;
-    if (destination === '0') {
-        id = column[0].id;
-    } else if (destination === '1') {
-        id = column[1].id;
-    } else if (destination === '2') {
-        id = column[2].id
-    } else if (destination === '3') {
-        id = column[3].id
-    } else {
-        return;
-    }
-    return id;
-}
+
+//TODO: Fix this function to update the whole array of items
+// const updateTasks = async function (column, index, token) {
+//     for (const task of column.items) {
+//         const newPosition = column.items.indexOf(task);
+//         if (newPosition !== index) {
+//             try {
+//                 const res = await client.patch(`tickets/${task.id}`, { position: newPosition }, {
+//                     headers: {
+//                         'Authorization': `Bearer ${token}`
+//                     }
+//                 });
+//                 console.log(`Task ${task.id} updated. Response:`, res);
+//             } catch (error) {
+//                 console.error(`Error updating task ${task.id}:`, error);
+//             }
+//             // Introduce a delay between requests (e.g., 200ms)
+//             await delay(200);
+//         }
+//     }
+// }
+
 const Board = () => {
     const [board, setBoard] = useState();
     const [loading, setLoading] = useState(true);
@@ -65,16 +73,15 @@ const Board = () => {
     const { token } = useUser();
     const [columns, setColumns] = useState(columnsFromBackend);
     const { boardId } = useParams();
-    console.log(columns);
 
     const onDragEnd = (result: { destination: any; source?: any; }, columns: { id: any; name: string; items: { id: any; content: string; }[]; }[], setColumns: { (value: SetStateAction<{ id: any; name: string; items: { id: any; content: string; }[]; }[]>): void; (arg0: any): void; }) => {
         if (!result.destination) return;
-        console.log(columns);
-        const { source, destination } = result;
-        console.log(result);
-        console.log(destination);
-        console.log(setId(destination.droppableId, columns))
+        const { source, destination, draggableId } = result;
+
         if (source.droppableId !== destination.droppableId) {
+            console.log('This executed', result.draggableId)
+            updateColumn(result.draggableId, setId(destination.droppableId, columns), token)
+            updatePosition(result.draggableId, destination.index, token)
             const sourceColumn = columns[source.droppableId];
             const destColumn = columns[destination.droppableId];
             const sourceItems = [...sourceColumn.items];
@@ -92,7 +99,11 @@ const Board = () => {
                     items: destItems
                 }
             });
+            // updateTasks(sourceColumn, source.index, token)
+            // updateTasks(destColumn, destination.index, token)
         } else {
+            console.log('This executed aswell')
+            updatePosition(result.draggableId, destination.index, token)
             const column = columns[source.droppableId];
             const copiedItems = [...column.items];
             const [removed] = copiedItems.splice(source.index, 1);
@@ -104,21 +115,20 @@ const Board = () => {
                     items: copiedItems
                 }
             });
+            // updateTasks(column, destination.index, token)
         }
     };
-    // console.log(columns)
 
     const getBoard = async () => {
         try {
             const res = await client.get(`boards/${boardId}`, { headers: { 'Authorization': `Bearer ${token}` } });
             setBoard(res.data);
-            console.log(res.data.columns);
             const newColumns = res.data.columns.map(col => ({
                 id: col.id,
                 name: col.name,
                 items: col.Ticket || [],
             }))
-            console.log(newColumns);
+
             setColumns(newColumns);
 
         } catch (error) {
@@ -166,30 +176,30 @@ const Board = () => {
             <Skeleton visible={loading}>
                 <Title align='center' my='xs' size='h2'>{board ? board.title : 'Not found'}</Title>
                 <Paper sx={{ boxShadow: theme.colorScheme === 'dark' ? '5px 5px 15px 5px #1C7ED6' : '5px 5px 15px 5px #91A7FF' }} shadow="lg" radius="lg" withBorder p="xl">
-                    <Container fluid>
-                        <Flex
-                            mih={50}
-                            gap='xs'
-                            justify="center"
-                            align="flex-start"
-                            direction="row"
-                        // wrap="wrap"
-                        >
 
-                            <DragDropContext
-                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                                onDragEnd={(result: any) => onDragEnd(result, columns, setColumns)}
-                            >
-                                {Object.entries(columns).map(([columnId, column], index) => {
-                                    return (
-                                        <Skeleton visible={loading}>
-                                            <Column column={column} columnId={columnId} index={index} />
-                                        </Skeleton>
-                                    );
-                                })}
-                            </DragDropContext>
-                        </Flex>
-                    </Container>
+                    <Flex
+                        mih={50}
+                        gap='xs'
+                        justify="center"
+                        align="flex-start"
+                        direction="row"
+                    // wrap="wrap"
+                    >
+
+                        <DragDropContext
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            onDragEnd={(result: any) => onDragEnd(result, columns, setColumns)}
+                        >
+                            {Object.entries(columns).map(([columnId, column], index) => {
+                                return (
+                                    <Skeleton visible={loading}>
+                                        <Column column={column} columnId={columnId} index={index} />
+                                    </Skeleton>
+                                );
+                            })}
+                        </DragDropContext>
+                    </Flex>
+
                 </Paper>
             </Skeleton >
 
