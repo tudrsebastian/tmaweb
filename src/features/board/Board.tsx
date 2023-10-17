@@ -3,7 +3,7 @@
 
 import { useState, useEffect, SetStateAction } from 'react';
 import { client } from '../../api/axios';
-import { Box, Card, Container, Flex, Paper, Skeleton, Title, useMantineTheme } from '@mantine/core';
+import { Box, Button, Card, Container, Flex, Modal, Paper, Skeleton, Title, useMantineTheme } from '@mantine/core';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import useUser from '../../store/userStore';
 import { notifications } from '@mantine/notifications';
@@ -11,7 +11,8 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { Column } from './components';
 import { setId, updateColumn, updatePosition } from '../../helpers/updateTicket';
 import { v4 as uuid } from 'uuid';
-
+import { useDisclosure } from '@mantine/hooks';
+import { TicketModal } from './components';
 const itemsFromBackend = [
     { id: uuid(), content: "First task" },
     { id: uuid(), content: "Second task", },
@@ -68,6 +69,7 @@ const columnsFromBackend = [
 const Board = () => {
     const [board, setBoard] = useState();
     const [loading, setLoading] = useState(true);
+    const [columnNames, setColumnNames] = useState();
     const navigate = useNavigate();
     const theme = useMantineTheme()
     const { token } = useUser();
@@ -118,7 +120,7 @@ const Board = () => {
             // updateTasks(column, destination.index, token)
         }
     };
-
+    // const columnNames = getNames(columns);
     const getBoard = async () => {
         try {
             const res = await client.get(`boards/${boardId}`, { headers: { 'Authorization': `Bearer ${token}` } });
@@ -128,7 +130,8 @@ const Board = () => {
                 name: col.name,
                 items: col.Ticket || [],
             }))
-
+            const columnName = res.data.columns.map(col => col.name);
+            setColumnNames(columnName)
             setColumns(newColumns);
 
         } catch (error) {
@@ -175,8 +178,8 @@ const Board = () => {
         <>
             <Skeleton visible={loading}>
                 <Title align='center' my='xs' size='h2'>{board ? board.title : 'Not found'}</Title>
+                <TicketModal columnNames={columnNames} columns={columns} />
                 <Paper sx={{ boxShadow: theme.colorScheme === 'dark' ? '5px 5px 15px 5px #1C7ED6' : '5px 5px 15px 5px #91A7FF' }} shadow="lg" radius="lg" withBorder p="xl">
-
                     <Flex
                         mih={50}
                         gap='xs'
@@ -193,6 +196,7 @@ const Board = () => {
                             {Object.entries(columns).map(([columnId, column], index) => {
                                 return (
                                     <Skeleton visible={loading}>
+
                                         <Column column={column} columnId={columnId} index={index} />
                                     </Skeleton>
                                 );

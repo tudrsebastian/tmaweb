@@ -1,7 +1,7 @@
 import React from "react";
 import { Task } from '../Task';
 import { Droppable } from "react-beautiful-dnd";
-import { Box, Badge, Paper, Text, useMantineTheme, Flex } from "@mantine/core";
+import { Box, Badge, Paper, Text, useMantineTheme, Flex, Button, ScrollArea } from "@mantine/core";
 import { useMediaQuery } from '@mantine/hooks'
 
 export default function Column({ column, columnId, index }) {
@@ -28,31 +28,34 @@ export default function Column({ column, columnId, index }) {
                 <Text fz={mobile ? 5 : 10}>{column.name}</Text>
             </Badge>
             {/* </Paper> */}
+
             <Paper my='md'  >
                 <Droppable droppableId={columnId} key={columnId}>
                     {(provided, snapshot) => {
                         return (
-                            <Box
-                                {...provided.droppableProps}
-                                ref={provided.innerRef}
-                                style={{
-                                    background: snapshot.isDraggingOver
-                                        ? theme.colorScheme === 'dark' ? theme.colors.gray[9] : theme.colors.gray[2] : theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[0]
-                                    ,
-                                    padding: 5,
-                                    width: mobile ? 60 : tablet ? 150 : laptop ? 250 : desktop ? 250 : desktopWide ? 500 : 300,
-                                    minHeight: 500
-                                }}
-                            >
-                                {column.items.map((item, index) => {
-                                    return (
-                                        <>
-                                            <Task item={item} index={index} />
-                                        </>
-                                    )
-                                })}
-                                {provided.placeholder}
-                            </Box>
+                            <ScrollArea h={500}>
+                                <Box
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                    style={{
+                                        background: snapshot.isDraggingOver
+                                            ? theme.colorScheme === 'dark' ? theme.colors.gray[9] : theme.colors.gray[2] : theme.colorScheme === 'dark' ? theme.colors.dark[5] : theme.colors.gray[0]
+                                        ,
+                                        padding: 5,
+                                        width: mobile ? 60 : tablet ? 150 : laptop ? 250 : desktop ? 250 : desktopWide ? 500 : 300,
+                                        minHeight: 600,
+                                    }}
+                                >
+                                    {column.items.map((item, index) => {
+                                        return (
+                                            <>
+                                                <Task item={item} index={index} />
+                                            </>
+                                        )
+                                    })}
+                                    {provided.placeholder}
+                                </Box>
+                            </ScrollArea>
                         );
                     }}
                 </Droppable>
